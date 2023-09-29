@@ -20,8 +20,9 @@ class ApiDatasource implements DataSource {
 
   @override
   Future<bool> add(Map<String, dynamic> map) async {
-    await init;
-    DatabaseReference ref = database.ref().child('todos').push();
+    map['completed'] = false;
+    var ref = database.ref('todos').push();
+    map['id'] = ref.key;
     await ref.set(map);
     return true;
   }
