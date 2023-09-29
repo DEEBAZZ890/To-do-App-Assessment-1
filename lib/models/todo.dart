@@ -4,16 +4,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 class Todo extends HiveObject {
   @HiveField(0)
   final String? internalID;
-
   String get id {
     if (key != null) return key.toString();
     return internalID ?? "Not Provided";
   }
+  // final String id; // Revert this back to the above code if this doesnt work
 
   @HiveField(1)
   final String name;
+
   @HiveField(2)
   final String description;
+
   @HiveField(3)
   bool completed;
 

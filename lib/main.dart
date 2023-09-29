@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:todo_app_24/models/todo_list.dart';
 import 'package:todo_app_24/services/api_datasource.dart';
 import 'package:todo_app_24/services/datasource.dart';
+import 'package:todo_app_24/services/sql_datasource.dart';
 //import 'package:todo_app_24/services/hive_datasource.dart';
 //import 'package:todo_app_24/services/sql_datasource.dart';
 import 'package:todo_app_24/widgets/todo_widget.dart';
@@ -11,8 +12,9 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  //GetIt.I.registerSingleton<DataSource>(HiveDatasource());
-  GetIt.I.registerSingleton<DataSource>(ApiDatasource());
+  //GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
+  GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
+  // GetIt.I.registerSingleton<DataSource>(SQLDatasource());
 
   runApp(ChangeNotifierProvider(
     create: (context) => TodoList(),

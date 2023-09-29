@@ -62,6 +62,7 @@ class SQLDatasource implements DataSource {
     return result == 1;
   }
 
+  // Uncomment this if the below read function doesnt work:
   @override
   Future<Todo> read(String id) async {
     await init;
