@@ -72,11 +72,33 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
-                return TodoWidget(
-                    todo: stateModel.todos[index],
-                    backgroundColor: index % 2 == 0
-                        ? Theme.of(context).hoverColor
-                        : Theme.of(context).highlightColor);
+                return ListTile(
+                  contentPadding: EdgeInsets.all(8.0),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        stateModel.todos[index].name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(
+                          height: 4.0), // add a bit of space between the texts
+                      Text(stateModel.todos[index].description),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      // Placeholder for your edit functionality
+                    },
+                  ),
+                  tileColor: index % 2 == 0
+                      ? Theme.of(context).hoverColor
+                      : Theme.of(context).highlightColor,
+                );
               },
             ),
           );
