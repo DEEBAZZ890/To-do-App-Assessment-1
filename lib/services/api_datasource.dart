@@ -49,20 +49,30 @@ class ApiDatasource implements DataSource {
   }
 
   @override
-  Future<bool> delete(Todo todo) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<bool> delete(Todo todo) async {
+    await init;
+    await database.ref().child('todos').child(todo.id).remove();
+    return true;
   }
 
   @override
-  Future<bool> edit(Todo todo) {
-    // TODO: implement edit
-    throw UnimplementedError();
+  Future<bool> edit(Todo todo) async {
+    await init;
+    await database.ref().child('todos').child(todo.id).update(todo.toMap());
+    return true;
   }
 
   @override
-  Future<Todo> read(String id) {
-    // TODO: implement read
-    throw UnimplementedError();
+  Future<Todo> read(String id) async {
+    await init;
+    DataSnapshot snapshot = await database.ref().child('todos').child(id).get();
+
+    if (snapshot.exists) {
+      Map<dynamic, dynamic> snapshotValue = snapshot.value as Map;
+      snapshotValue['id'] = id;
+      return Todo.fromMap(Map<String, dynamic>.from(snapshotValue));
+    } else {
+      throw Exception("An error occurred - Todo not found!");
+    }
   }
 }

@@ -2,20 +2,19 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app_24/models/todo.dart';
 import 'package:todo_app_24/services/datasource.dart';
 
-// Note - in the notes he calss this idatasource or something
 class HiveDatasource implements DataSource {
   late Future init;
 
   HiveDatasource() {
-    init = initialise();
+    init = initalise();
   }
 
-  Future<void> initialise() async {
+  Future<void> initalise() async {
     await Hive.initFlutter();
     Hive.registerAdapter(TodoAdapter());
     await Hive.openBox<Todo>('todos');
-    // Used to delte the hive box from disk
-    // Hive.deleteBoxFromDisk('todos');
+    //Used to delete the hive box from disk
+    //Hive.deleteBoxFromDisk('todos');
   }
 
   @override
@@ -42,8 +41,8 @@ class HiveDatasource implements DataSource {
 
   @override
   Future<bool> edit(Todo todo) async {
-    todo.save();
-    return true;
+    // TODO: implement read
+    throw UnimplementedError();
   }
 
   @override
