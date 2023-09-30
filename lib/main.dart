@@ -73,24 +73,24 @@ class _HomePageState extends State<HomePage> {
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
                 return ListTile(
-                  contentPadding: EdgeInsets.all(8.0),
+                  contentPadding: const EdgeInsets.all(8.0),
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         stateModel.todos[index].name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                           height: 4.0), // add a bit of space between the texts
                       Text(stateModel.todos[index].description),
                     ],
                   ),
                   trailing: IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     onPressed: () {
                       // Placeholder for your edit functionality
                     },
