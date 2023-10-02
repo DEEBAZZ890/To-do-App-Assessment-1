@@ -44,9 +44,12 @@ class TodoList extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> update(Todo todo) async {
-    await GetIt.I<DataSource>().edit(todo);
-    await browse();
-    notifyListeners();
+  Future<void> update(Todo updatedTodo) async {
+    int index = _todos.indexWhere((todo) => todo.name == updatedTodo.name);
+    if (index != -1) {
+      _todos[index] = updatedTodo;
+      await GetIt.I<DataSource>().edit(updatedTodo);
+      notifyListeners();
+    }
   }
 }

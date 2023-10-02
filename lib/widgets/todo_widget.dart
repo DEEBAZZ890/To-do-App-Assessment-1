@@ -3,10 +3,14 @@ import 'package:todo_app_24/models/todo.dart';
 
 class TodoWidget extends StatefulWidget {
   final Todo todo;
+  final VoidCallback toggleCompletion;
+  final VoidCallback editTodo;
 
   const TodoWidget({
     super.key,
     required this.todo,
+    required this.toggleCompletion,
+    required this.editTodo,
   });
 
   @override
@@ -23,21 +27,22 @@ class _TodoWidgetState extends State<TodoWidget> {
         padding: const EdgeInsets.fromLTRB(25, 20, 5, 20),
         child: Row(
           children: [
-            // If completed, show green circle with a white tick
-            // Otherwise, show an outlined circle.
-            widget.todo.completed
-                ? const Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(Icons.check_circle_rounded,
-                          color: Colors.green, size: 30),
-                      Icon(Icons.check, color: Colors.white, size: 20),
-                    ],
-                  )
-                : const Icon(Icons.radio_button_unchecked,
-                    color: Colors.black, size: 30),
-            const SizedBox(
-                width: 15), // Spacing between the circle and the text
+            // Completed icon
+            InkWell(
+              onTap: widget.toggleCompletion,
+              child: widget.todo.completed
+                  ? const Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(Icons.check_circle_rounded,
+                            color: Colors.green, size: 30),
+                        Icon(Icons.check, color: Colors.white, size: 20),
+                      ],
+                    )
+                  : const Icon(Icons.radio_button_unchecked,
+                      color: Colors.black, size: 30),
+            ),
+            // Todo name and description
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,9 +61,10 @@ class _TodoWidgetState extends State<TodoWidget> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(Icons.edit, size: 20.0),
+            // Edit button
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: widget.editTodo,
             ),
           ],
         ),

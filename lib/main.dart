@@ -72,12 +72,10 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    // Use the toggleCompletion method when tapping on a todo
-                    toggleCompletion(stateModel, index);
-                  },
-                  child: TodoWidget(todo: stateModel.todos[index]),
+                return TodoWidget(
+                  todo: stateModel.todos[index],
+                  toggleCompletion: () => toggleCompletion(stateModel, index),
+                  editTodo: () => editTodo(stateModel.todos[index]),
                 );
               },
             ),
@@ -133,11 +131,47 @@ class _HomePageState extends State<HomePage> {
 
   void toggleCompletion(TodoList stateModel, int index) {
     setState(() {
-      // Toggle the completion status of the todo
       stateModel.todos[index].completed = !stateModel.todos[index].completed;
-
-      // Update the todo in your data source (e.g., database)
       stateModel.update(stateModel.todos[index]);
     });
+  }
+
+  void editTodo(Todo currentTodo) {
+    _controllerName.text = currentTodo.name;
+    _controllerDescription.text = currentTodo.description;
+
+    showDialog(
+      context: context,
+      builder: (builder) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Name'),
+              TextFormField(
+                controller: _controllerName,
+              ),
+              const Text('Description'),
+              TextFormField(
+                controller: _controllerDescription,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Todo updatedTodo = Todo(
+                    name: _controllerName.text,
+                    description: _controllerDescription.text,
+                    completed: currentTodo.completed,
+                  );
+                  Provider.of<TodoList>(context, listen: false)
+                      .update(updatedTodo);
+                  Navigator.pop(context);
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
