@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:todo_app_24/models/todo_list.dart';
-import 'package:todo_app_24/services/api_datasource.dart';
-import 'package:todo_app_24/services/datasource.dart';
-import 'package:todo_app_24/services/sql_datasource.dart';
-//import 'package:todo_app_24/services/hive_datasource.dart';
-//import 'package:todo_app_24/services/sql_datasource.dart';
-import 'package:todo_app_24/widgets/todo_widget.dart';
 import 'models/todo.dart';
+import 'package:todo_app_24/models/todo_list.dart';
+import 'package:todo_app_24/services/datasource.dart';
+import 'package:todo_app_24/services/api_datasource.dart';
+import 'package:todo_app_24/services/sql_datasource.dart';
+import 'package:todo_app_24/services/hive_datasource.dart';
+import 'package:todo_app_24/widgets/todo_widget.dart';
+
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  //GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
-  GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
+  GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
+  // GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
   // GetIt.I.registerSingleton<DataSource>(SQLDatasource());
 
   runApp(ChangeNotifierProvider(
@@ -72,11 +72,13 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
-                return TodoWidget(
-                    todo: stateModel.todos[index],
-                    backgroundColor: index % 2 == 0
-                        ? Theme.of(context).hoverColor
-                        : Theme.of(context).highlightColor);
+                return InkWell(
+                  onTap: () {
+                    // Use the toggleCompletion method when tapping on a todo
+                    toggleCompletion(stateModel, index);
+                  },
+                  child: TodoWidget(todo: stateModel.todos[index]),
+                );
               },
             ),
           );
@@ -127,5 +129,15 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         });
+  }
+
+  void toggleCompletion(TodoList stateModel, int index) {
+    setState(() {
+      // Toggle the completion status of the todo
+      stateModel.todos[index].completed = !stateModel.todos[index].completed;
+
+      // Update the todo in your data source (e.g., database)
+      stateModel.update(stateModel.todos[index]);
+    });
   }
 }

@@ -30,19 +30,23 @@ class TodoList extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeAll() {
-    _todos.clear();
+  Future<void> removeAll() async {
+    for (var todo in _todos) {
+      await GetIt.I<DataSource>().delete(todo);
+    }
+    await browse();
     notifyListeners();
   }
 
-  void remove(Todo todo) {
-    _todos.remove(todo);
+  Future<void> remove(Todo todo) async {
+    await GetIt.I<DataSource>().delete(todo);
+    await browse();
     notifyListeners();
   }
 
-  void update(Todo todo) {
-    Todo listTodo = _todos.firstWhere((t) => t.name == todo.name);
-    listTodo = todo;
+  Future<void> update(Todo todo) async {
+    await GetIt.I<DataSource>().edit(todo);
+    await browse();
     notifyListeners();
   }
 }

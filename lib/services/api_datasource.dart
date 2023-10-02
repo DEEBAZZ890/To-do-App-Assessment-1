@@ -19,15 +19,6 @@ class ApiDatasource implements DataSource {
   }
 
   @override
-  Future<bool> add(Map<String, dynamic> map) async {
-    map['completed'] = false;
-    var ref = database.ref('todos').push();
-    map['id'] = ref.key;
-    await ref.set(map);
-    return true;
-  }
-
-  @override
   Future<List<Todo>> browse() async {
     await init;
     //Firebase uses the database.ref to query the database and get a potential reference back. It is fetched with get().
@@ -49,20 +40,6 @@ class ApiDatasource implements DataSource {
   }
 
   @override
-  Future<bool> delete(Todo todo) async {
-    await init;
-    await database.ref().child('todos').child(todo.id).remove();
-    return true;
-  }
-
-  @override
-  Future<bool> edit(Todo todo) async {
-    await init;
-    await database.ref().child('todos').child(todo.id).update(todo.toMap());
-    return true;
-  }
-
-  @override
   Future<Todo> read(String id) async {
     await init;
     DataSnapshot snapshot = await database.ref().child('todos').child(id).get();
@@ -74,5 +51,28 @@ class ApiDatasource implements DataSource {
     } else {
       throw Exception("An error occurred - Todo not found!");
     }
+  }
+
+  @override
+  Future<bool> add(Map<String, dynamic> map) async {
+    map['completed'] = false;
+    var ref = database.ref('todos').push();
+    map['id'] = ref.key;
+    await ref.set(map);
+    return true;
+  }
+
+  @override
+  Future<bool> edit(Todo todo) async {
+    await init;
+    await database.ref().child('todos').child(todo.id).update(todo.toMap());
+    return true;
+  }
+
+  @override
+  Future<bool> delete(Todo todo) async {
+    await init;
+    await database.ref().child('todos').child(todo.id).remove();
+    return true;
   }
 }
