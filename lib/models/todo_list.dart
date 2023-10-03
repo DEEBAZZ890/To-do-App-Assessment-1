@@ -26,7 +26,7 @@ class TodoList extends ChangeNotifier {
 
   Future<void> add(Map<String, dynamic> todoMap) async {
     await GetIt.I<DataSource>().add(todoMap);
-    todoMap['internalID'] = todoMap['id']; // Make sure the internalID is set
+    todoMap['internalID'] = todoMap['id'];
     await browse();
     notifyListeners();
   }

@@ -26,7 +26,7 @@ class SQLDatasource implements DataSource {
   Future<bool> add(Map<String, dynamic> map) async {
     await init;
     int id = await database.insert('todos', map);
-    map['internalID'] = id.toString(); // Set the returned ID
+    map['internalID'] = id.toString();
     return true;
   }
 
@@ -59,7 +59,6 @@ class SQLDatasource implements DataSource {
         todo.internalID != null ? int.tryParse(todo.internalID!) ?? -1 : -1;
 
     if (id == -1) {
-      print('SQL - Invalid ID provided.');
       return false;
     }
 

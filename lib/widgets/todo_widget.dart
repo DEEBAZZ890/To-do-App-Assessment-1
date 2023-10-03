@@ -40,7 +40,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                   )
                 : const Icon(Icons.radio_button_unchecked,
                     color: Colors.black, size: 30),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

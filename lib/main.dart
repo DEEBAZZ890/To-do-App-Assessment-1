@@ -7,7 +7,6 @@ import 'package:todo_app_24/services/api_datasource.dart';
 import 'package:todo_app_24/services/sql_datasource.dart';
 import 'package:todo_app_24/services/hive_datasource.dart';
 import 'package:todo_app_24/widgets/todo_widget.dart';
-
 import 'package:provider/provider.dart';
 
 void main() {
@@ -65,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           Consumer<TodoList>(
             builder: (context, stateModel, child) {
               return Padding(
-                padding: const EdgeInsets.only(right: 10.0), // Adjust as needed
+                padding: const EdgeInsets.only(right: 10.0),
                 child: Text(
                   "Completed: ${stateModel.completedTodos} / ${stateModel.todoCount}",
                   style: const TextStyle(
@@ -217,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 5),
                 Text(currentTodo.description),
-                const SizedBox(height: 20), // Some spacing before the buttons
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

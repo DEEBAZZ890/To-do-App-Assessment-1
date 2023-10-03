@@ -43,8 +43,7 @@ class HiveDatasource implements DataSource {
 
     int keyAsInt = int.tryParse(todo.id) ?? -1;
     if (keyAsInt != -1 && box.containsKey(keyAsInt)) {
-      // Use int key
-      box.put(keyAsInt, todo); // Use int key
+      box.put(keyAsInt, todo);
       return true;
     }
 
@@ -58,7 +57,6 @@ class HiveDatasource implements DataSource {
     Todo t = Todo.fromMap(map);
     int key = await box.add(t);
 
-    // Create a new Todo with the internalID set
     Todo newTodo = Todo(
       name: t.name,
       description: t.description,
@@ -66,7 +64,6 @@ class HiveDatasource implements DataSource {
       internalID: key.toString(),
     );
 
-    // Now, we should replace the original todo with the newTodo in the box
     await box.put(key, newTodo);
 
     return true;
