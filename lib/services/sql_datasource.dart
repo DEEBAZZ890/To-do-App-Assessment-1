@@ -25,25 +25,24 @@ class SQLDatasource implements DataSource {
   @override
   Future<bool> add(Map<String, dynamic> map) async {
     await init;
-    map.remove('id');
-    await database.insert('todos', map,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    map.remove('internalID');
+    int id = await database.insert('todos', map);
+    map['internalID'] = id.toString(); // Set the returned ID
     return true;
   }
 
   @override
   Future<List<Todo>> browse() async {
-    await init; //wait for init completion before attempting to fetch data.
-
+    await init;
     List<Map<String, dynamic>> maps = await database.query('todos');
     return List.generate(
       maps.length,
-      (index) => Todo.fromMap({
-        'internalID': maps[index]['id'].toString(),
-        'name': maps[index]['name'],
-        'description': maps[index]['description'],
-        'completed': maps[index]['completed'] == 1 ? true : false,
-      }),
+      (index) => Todo(
+        internalID: maps[index]['id'].toString(),
+        name: maps[index]['name'],
+        description: maps[index]['description'],
+        completed: maps[index]['completed'] == 1 ? true : false,
+      ),
     );
   }
 
@@ -56,32 +55,24 @@ class SQLDatasource implements DataSource {
 
   @override
   Future<bool> edit(Todo todo) async {
-    print("SQL - Attempting to update Todo: ${todo.name}, ${todo.description}");
-
     await init;
-    final db = await database;
+    int id =
+        todo.internalID != null ? int.tryParse(todo.internalID!) ?? -1 : -1;
 
-    // Debugging print statements
-    print("SQL - ID of Todo being updated: ${todo.id}");
-    Map<String, dynamic> map = todo.toMap();
-    print("SQL - Map for updating: $map");
-
-    var existingTodo =
-        await db.query('todos', where: 'id = ?', whereArgs: [todo.id]);
-    print("SQL - Todo with the given ID in the database: $existingTodo");
-
-    // Actual update logic
-    int result =
-        await db.update('todos', map, where: 'id = ?', whereArgs: [todo.id]);
-
-    if (result > 0) {
-      print(
-          "SQL - Successfully updated Todo: ${todo.name}, ${todo.description}");
-      return true;
-    } else {
-      print("SQL - Failed to update Todo: ${todo.name}");
+    if (id == -1) {
+      print('SQL - Invalid ID provided.');
       return false;
     }
+
+    int updatedRows = await database.update(
+      'todos',
+      todo.toMap(),
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return updatedRows > 0;
   }
 
   // Uncomment this if the below read function doesnt work:

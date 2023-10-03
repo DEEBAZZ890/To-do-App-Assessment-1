@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:todo_app_24/models/todo.dart';
 import 'package:todo_app_24/services/datasource.dart';
-import 'package:hive/hive.dart';
 
 class TodoList extends ChangeNotifier {
   List<Todo> _todos = [];
@@ -26,7 +25,8 @@ class TodoList extends ChangeNotifier {
   }
 
   Future<void> add(Map<String, dynamic> todoMap) async {
-    GetIt.I<DataSource>().add(todoMap);
+    await GetIt.I<DataSource>().add(todoMap);
+    todoMap['internalID'] = todoMap['id']; // Make sure the internalID is set
     await browse();
     notifyListeners();
   }
@@ -46,13 +46,11 @@ class TodoList extends ChangeNotifier {
   }
 
   Future<void> update(Todo updatedTodo) async {
-    int index = _todos
-        .indexWhere((todo) => todo.id == updatedTodo.id); // Use id for lookup
+    int index =
+        _todos.indexWhere((todo) => todo.internalID == updatedTodo.internalID);
     if (index != -1) {
       _todos[index] = updatedTodo;
-
       await GetIt.I<DataSource>().edit(updatedTodo);
-
       notifyListeners();
     }
   }

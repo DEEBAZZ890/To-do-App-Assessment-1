@@ -72,6 +72,8 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
+                print(
+                    "Rendering TodoWidget with Todo ID: ${stateModel.todos[index].id}"); // Add this line
                 return TodoWidget(
                   todo: stateModel.todos[index],
                   toggleCompletion: () => _toggleCompletion(stateModel, index),
@@ -137,6 +139,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _editTodo(Todo currentTodo) {
+    print("Editing Todo with ID: ${currentTodo.id}"); // Add this line
+
     _controllerName.text = currentTodo.name;
     _controllerDescription.text = currentTodo.description;
 
@@ -159,11 +163,14 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     // Create a new Todo with updated values
                     Todo updatedTodo = Todo(
-                        name: _controllerName.text,
-                        description: _controllerDescription.text,
-                        completed: currentTodo.completed,
-                        internalID: currentTodo.id // <-- Retain the original id
-                        );
+                      name: _controllerName.text,
+                      description: _controllerDescription.text,
+                      completed: currentTodo.completed,
+                      internalID:
+                          currentTodo.internalID, // <-- Retain the original id
+                    );
+                    print("Todo ID: ${updatedTodo.id}");
+
                     // Update the data source
                     Provider.of<TodoList>(context, listen: false)
                         .update(updatedTodo);
