@@ -12,8 +12,8 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
-  // GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
+  // GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
+  GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
   // GetIt.I.registerSingleton<DataSource>(SQLDatasource());
 
   runApp(ChangeNotifierProvider(
@@ -54,12 +54,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Consumer<TodoList>(
             builder: (context, stateModel, child) {
-              return Text(
-                  "Completed: ${stateModel.completedTodos} / ${stateModel.todoCount}");
+              return Padding(
+                padding: const EdgeInsets.only(right: 10.0), // Adjust as needed
+                child: Text(
+                  "Completed: ${stateModel.completedTodos} / ${stateModel.todoCount}",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
             },
           )
         ],
@@ -72,13 +86,15 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: stateModel.todoCount,
               itemBuilder: (context, index) {
-                print(
-                    "Rendering TodoWidget with Todo ID: ${stateModel.todos[index].id}"); // Add this line
-                return TodoWidget(
-                  todo: stateModel.todos[index],
-                  toggleCompletion: () => _toggleCompletion(stateModel, index),
-                  editTodo: () => _editTodo(stateModel.todos[index]),
-                  deleteTodo: () => _deleteTodo(stateModel.todos[index]),
+                return InkWell(
+                  onTap: () => _toggleCompletion(stateModel, index),
+                  child: TodoWidget(
+                    todo: stateModel.todos[index],
+                    toggleCompletion: () =>
+                        _toggleCompletion(stateModel, index),
+                    editTodo: () => _editTodo(stateModel.todos[index]),
+                    deleteTodo: () => _deleteTodo(stateModel.todos[index]),
+                  ),
                 );
               },
             ),
@@ -114,15 +130,14 @@ class _HomePageState extends State<HomePage> {
                   controller: _controllerDescription,
                 ),
                 ElevatedButton(
-                  onPressed: () => {
-                    //functionality of the save button
+                  onPressed: () {
                     setState(() {
                       Provider.of<TodoList>(context, listen: false).add({
                         'name': _controllerName.text,
                         'description': _controllerDescription.text
                       });
                       Navigator.pop(context);
-                    })
+                    });
                   },
                   child: const Text('Save'),
                 )
@@ -140,8 +155,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _editTodo(Todo currentTodo) {
-    print("Editing Todo with ID: ${currentTodo.id}"); // Add this line
-
     _controllerName.text = currentTodo.name;
     _controllerDescription.text = currentTodo.description;
 
@@ -162,21 +175,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Create a new Todo with updated values
                     Todo updatedTodo = Todo(
                       name: _controllerName.text,
                       description: _controllerDescription.text,
                       completed: currentTodo.completed,
-                      internalID:
-                          currentTodo.internalID, // <-- Retain the original id
+                      internalID: currentTodo.internalID,
                     );
-                    print("Todo ID: ${updatedTodo.id}");
 
-                    // Update the data source
                     Provider.of<TodoList>(context, listen: false)
                         .update(updatedTodo);
-
-                    // Close the dialog
                     Navigator.pop(context);
                   },
                   child: const Text('Save'),
@@ -189,43 +196,65 @@ class _HomePageState extends State<HomePage> {
 
   void _deleteTodo(Todo currentTodo) {
     showDialog(
-        context: context,
-        builder: (builder) {
-          return AlertDialog(
-            title: const Text('Delete Todo'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
+      context: context,
+      builder: (builder) {
+        return AlertDialog(
+          title: const Text(
+            'Delete Todo',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
               children: [
-                Text('Name: ${currentTodo.name}'),
-                Text('Description: ${currentTodo.description}'),
+                Text(
+                  currentTodo.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(currentTodo.description),
+                const SizedBox(height: 20), // Some spacing before the buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
+                    OutlinedButton(
                       onPressed: () {
-                        // Delete the todo
                         Provider.of<TodoList>(context, listen: false)
                             .remove(currentTodo);
-
-                        // Close the dialog
                         Navigator.pop(context);
                       },
-                      child: const Text('Delete'),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        backgroundColor: Colors.red[100],
+                      ),
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
-                    ElevatedButton(
+                    OutlinedButton(
                       onPressed: () {
-                        // Close the dialog without deleting
                         Navigator.pop(context);
                       },
-                      child: const Text('Cancel'),
-                    )
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
                   ],
-                )
+                ),
               ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

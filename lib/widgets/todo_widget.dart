@@ -29,22 +29,18 @@ class _TodoWidgetState extends State<TodoWidget> {
         padding: const EdgeInsets.fromLTRB(25, 20, 5, 20),
         child: Row(
           children: [
-            // Completed icon
-            InkWell(
-              onTap: widget.toggleCompletion,
-              child: widget.todo.completed
-                  ? const Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(Icons.check_circle_rounded,
-                            color: Colors.green, size: 30),
-                        Icon(Icons.check, color: Colors.white, size: 20),
-                      ],
-                    )
-                  : const Icon(Icons.radio_button_unchecked,
-                      color: Colors.black, size: 30),
-            ),
-            // Todo name and description
+            widget.todo.completed
+                ? const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(Icons.check_circle_rounded,
+                          color: Colors.green, size: 30),
+                      Icon(Icons.check, color: Colors.white, size: 20),
+                    ],
+                  )
+                : const Icon(Icons.radio_button_unchecked,
+                    color: Colors.black, size: 30),
+            SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,18 +59,11 @@ class _TodoWidgetState extends State<TodoWidget> {
                 ],
               ),
             ),
-            // Edit button
             IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  widget.editTodo();
-                }),
-            // Delete button
+                icon: const Icon(Icons.edit), onPressed: widget.editTodo),
             IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: () {
-                widget.deleteTodo(); // Add this callback
-              },
+              onPressed: widget.deleteTodo,
             )
           ],
         ),
