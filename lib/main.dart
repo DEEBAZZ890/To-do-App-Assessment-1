@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
+  GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
   // GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
-  GetIt.I.registerSingleton<DataSource>(SQLDatasource());
+  // GetIt.I.registerSingleton<DataSource>(SQLDatasource());
 
   runApp(ChangeNotifierProvider(
     create: (context) => TodoList(),
@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                   todo: stateModel.todos[index],
                   toggleCompletion: () => _toggleCompletion(stateModel, index),
                   editTodo: () => _editTodo(stateModel.todos[index]),
+                  deleteTodo: () => _deleteTodo(stateModel.todos[index]),
                 );
               },
             ),
@@ -179,6 +180,48 @@ class _HomePageState extends State<HomePage> {
                     Navigator.pop(context);
                   },
                   child: const Text('Save'),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  void _deleteTodo(Todo currentTodo) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            title: const Text('Delete Todo'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Name: ${currentTodo.name}'),
+                Text('Description: ${currentTodo.description}'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Delete the todo
+                        Provider.of<TodoList>(context, listen: false)
+                            .remove(currentTodo);
+
+                        // Close the dialog
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Delete'),
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Close the dialog without deleting
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    )
+                  ],
                 )
               ],
             ),

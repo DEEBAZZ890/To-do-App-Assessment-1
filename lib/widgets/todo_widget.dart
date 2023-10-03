@@ -5,12 +5,14 @@ class TodoWidget extends StatefulWidget {
   final Todo todo;
   final VoidCallback toggleCompletion;
   final VoidCallback editTodo;
+  final VoidCallback deleteTodo;
 
   const TodoWidget({
     super.key,
     required this.todo,
     required this.toggleCompletion,
     required this.editTodo,
+    required this.deleteTodo,
   });
 
   @override
@@ -63,9 +65,17 @@ class _TodoWidgetState extends State<TodoWidget> {
             ),
             // Edit button
             IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: widget.editTodo,
-            ),
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  widget.editTodo();
+                }),
+            // Delete button
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {
+                widget.deleteTodo(); // Add this callback
+              },
+            )
           ],
         ),
       ),
