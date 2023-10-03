@@ -56,7 +56,19 @@ class HiveDatasource implements DataSource {
     await init;
     Box<Todo> box = Hive.box<Todo>('todos');
     Todo t = Todo.fromMap(map);
-    await box.add(t);
+    int key = await box.add(t);
+
+    // Create a new Todo with the internalID set
+    Todo newTodo = Todo(
+      name: t.name,
+      description: t.description,
+      completed: t.completed,
+      internalID: key.toString(),
+    );
+
+    // Now, we should replace the original todo with the newTodo in the box
+    await box.put(key, newTodo);
+
     return true;
   }
 

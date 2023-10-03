@@ -25,7 +25,6 @@ class SQLDatasource implements DataSource {
   @override
   Future<bool> add(Map<String, dynamic> map) async {
     await init;
-    map.remove('internalID');
     int id = await database.insert('todos', map);
     map['internalID'] = id.toString(); // Set the returned ID
     return true;
