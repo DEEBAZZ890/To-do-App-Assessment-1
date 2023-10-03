@@ -41,8 +41,10 @@ class HiveDatasource implements DataSource {
     await init;
     Box<Todo> box = Hive.box<Todo>('todos');
 
-    if (box.containsKey(todo.key)) {
-      box.put(todo.key, todo);
+    int keyAsInt = int.tryParse(todo.id) ?? -1;
+    if (keyAsInt != -1 && box.containsKey(keyAsInt)) {
+      // Use int key
+      box.put(keyAsInt, todo); // Use int key
       return true;
     }
 

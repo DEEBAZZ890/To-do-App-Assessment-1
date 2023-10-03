@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:todo_app_24/models/todo.dart';
 import 'package:todo_app_24/services/datasource.dart';
+import 'package:hive/hive.dart';
 
 class TodoList extends ChangeNotifier {
   List<Todo> _todos = [];
@@ -45,10 +46,13 @@ class TodoList extends ChangeNotifier {
   }
 
   Future<void> update(Todo updatedTodo) async {
-    int index = _todos.indexWhere((todo) => todo.name == updatedTodo.name);
+    int index = _todos
+        .indexWhere((todo) => todo.id == updatedTodo.id); // Use id for lookup
     if (index != -1) {
       _todos[index] = updatedTodo;
+
       await GetIt.I<DataSource>().edit(updatedTodo);
+
       notifyListeners();
     }
   }

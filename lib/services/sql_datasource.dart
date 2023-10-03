@@ -56,10 +56,32 @@ class SQLDatasource implements DataSource {
 
   @override
   Future<bool> edit(Todo todo) async {
+    print("SQL - Attempting to update Todo: ${todo.name}, ${todo.description}");
+
     await init;
-    int result = await database
-        .update('todos', todo.toMap(), where: 'id = ?', whereArgs: [todo.id]);
-    return result == 1;
+    final db = await database;
+
+    // Debugging print statements
+    print("SQL - ID of Todo being updated: ${todo.id}");
+    Map<String, dynamic> map = todo.toMap();
+    print("SQL - Map for updating: $map");
+
+    var existingTodo =
+        await db.query('todos', where: 'id = ?', whereArgs: [todo.id]);
+    print("SQL - Todo with the given ID in the database: $existingTodo");
+
+    // Actual update logic
+    int result =
+        await db.update('todos', map, where: 'id = ?', whereArgs: [todo.id]);
+
+    if (result > 0) {
+      print(
+          "SQL - Successfully updated Todo: ${todo.name}, ${todo.description}");
+      return true;
+    } else {
+      print("SQL - Failed to update Todo: ${todo.name}");
+      return false;
+    }
   }
 
   // Uncomment this if the below read function doesnt work:

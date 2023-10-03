@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
+  // GetIt.I.registerSingleton<DataSource>(HiveDatasource()); // For Hive
   // GetIt.I.registerSingleton<DataSource>(ApiDatasource()); // For the API
-  // GetIt.I.registerSingleton<DataSource>(SQLDatasource());
+  GetIt.I.registerSingleton<DataSource>(SQLDatasource());
 
   runApp(ChangeNotifierProvider(
     create: (context) => TodoList(),
@@ -74,8 +74,8 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return TodoWidget(
                   todo: stateModel.todos[index],
-                  toggleCompletion: () => toggleCompletion(stateModel, index),
-                  editTodo: () => editTodo(stateModel.todos[index]),
+                  toggleCompletion: () => _toggleCompletion(stateModel, index),
+                  editTodo: () => _editTodo(stateModel.todos[index]),
                 );
               },
             ),
@@ -129,49 +129,53 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  void toggleCompletion(TodoList stateModel, int index) {
+  void _toggleCompletion(TodoList stateModel, int index) {
     setState(() {
       stateModel.todos[index].completed = !stateModel.todos[index].completed;
       stateModel.update(stateModel.todos[index]);
     });
   }
 
-  void editTodo(Todo currentTodo) {
+  void _editTodo(Todo currentTodo) {
     _controllerName.text = currentTodo.name;
     _controllerDescription.text = currentTodo.description;
 
     showDialog(
-      context: context,
-      builder: (builder) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Name'),
-              TextFormField(
-                controller: _controllerName,
-              ),
-              const Text('Description'),
-              TextFormField(
-                controller: _controllerDescription,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Todo updatedTodo = Todo(
-                    name: _controllerName.text,
-                    description: _controllerDescription.text,
-                    completed: currentTodo.completed,
-                  );
-                  Provider.of<TodoList>(context, listen: false)
-                      .update(updatedTodo);
-                  Navigator.pop(context);
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Name'),
+                TextFormField(
+                  controller: _controllerName,
+                ),
+                const Text('Description'),
+                TextFormField(
+                  controller: _controllerDescription,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Create a new Todo with updated values
+                    Todo updatedTodo = Todo(
+                        name: _controllerName.text,
+                        description: _controllerDescription.text,
+                        completed: currentTodo.completed,
+                        internalID: currentTodo.id // <-- Retain the original id
+                        );
+                    // Update the data source
+                    Provider.of<TodoList>(context, listen: false)
+                        .update(updatedTodo);
+
+                    // Close the dialog
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Save'),
+                )
+              ],
+            ),
+          );
+        });
   }
 }
