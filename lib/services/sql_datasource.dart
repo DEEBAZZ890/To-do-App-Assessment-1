@@ -23,14 +23,6 @@ class SQLDatasource implements DataSource {
   }
 
   @override
-  Future<bool> add(Map<String, dynamic> map) async {
-    await init;
-    int id = await database.insert('todos', map);
-    map['internalID'] = id.toString();
-    return true;
-  }
-
-  @override
   Future<List<Todo>> browse() async {
     await init;
     List<Map<String, dynamic>> maps = await database.query('todos');
@@ -46,10 +38,11 @@ class SQLDatasource implements DataSource {
   }
 
   @override
-  Future<bool> delete(Todo todo) async {
+  Future<Todo> read(String id) async {
     await init;
-    await database.delete('todos', where: 'id = ?', whereArgs: [todo.id]);
-    return true;
+    List<Map<String, dynamic>> maps = await database.query('todos');
+    await database.query('todos', where: 'id = ?', whereArgs: [id]);
+    return Todo(name: 'name', description: 'description');
   }
 
   @override
@@ -73,12 +66,18 @@ class SQLDatasource implements DataSource {
     return updatedRows > 0;
   }
 
-  // Uncomment this if the below read function doesnt work:
   @override
-  Future<Todo> read(String id) async {
+  Future<bool> add(Map<String, dynamic> map) async {
     await init;
-    List<Map<String, dynamic>> maps = await database.query('todos');
-    await database.query('todos', where: 'id = ?', whereArgs: [id]);
-    return Todo(name: 'name', description: 'description');
+    int id = await database.insert('todos', map);
+    map['internalID'] = id.toString();
+    return true;
+  }
+
+  @override
+  Future<bool> delete(Todo todo) async {
+    await init;
+    await database.delete('todos', where: 'id = ?', whereArgs: [todo.id]);
+    return true;
   }
 }

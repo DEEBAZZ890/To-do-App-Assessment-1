@@ -8,7 +8,6 @@ class Todo extends HiveObject {
     if (key != null) return key.toString();
     return internalID ?? "Not Provided";
   }
-  // final String id; // Revert this back to the above code if this doesnt work
 
   @HiveField(1)
   final String name;
@@ -41,7 +40,6 @@ class Todo extends HiveObject {
   }
 
   factory Todo.fromMap(Map<String, dynamic> mapData) {
-    //Validate completed type if SQL
     bool completed;
     if (mapData['completed'] is int) {
       completed = mapData['completed'] != 0;
@@ -60,7 +58,6 @@ class Todo extends HiveObject {
 }
 
 class TodoAdapter extends TypeAdapter<Todo> {
-  //Removed the int from the read() which solves the error we got last week.
   @override
   Todo read(BinaryReader reader) {
     Map<String, dynamic> map = {

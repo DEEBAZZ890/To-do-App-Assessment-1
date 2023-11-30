@@ -21,16 +21,12 @@ class ApiDatasource implements DataSource {
   @override
   Future<List<Todo>> browse() async {
     await init;
-    //Firebase uses the database.ref to query the database and get a potential reference back. It is fetched with get().
     DataSnapshot snapshot = await database.ref().child('todos').get();
     List<Todo> todos = <Todo>[];
     if (snapshot.exists) {
-      //Can validate if the location/reference exists
-      Map<dynamic, dynamic> snapshotValue = snapshot.value
-          as Map; //The value is held within and can be returned as a map.
+      Map<dynamic, dynamic> snapshotValue = snapshot.value as Map;
       if (snapshotValue.isNotEmpty) {
         snapshotValue.forEach((key, value) {
-          //Iterate over the map of key - value pairs to build todos.
           value['id'] = key;
           todos.add(Todo.fromMap(Map<String, dynamic>.from(value)));
         });
